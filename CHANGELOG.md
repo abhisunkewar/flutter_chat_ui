@@ -1,3 +1,116 @@
+## 1.5.6
+
+- Add `receivedMessageBodyLinkTextStyle` and `sentMessageBodyLinkTextStyle` to the theme. Thanks @felixgabler for the PR!
+- Add `sendButtonMargin` to the theme. Thanks @damian-kaczmarek for the PR!
+- Add German localization. Thanks @felixgabler for the PR!
+
+## 1.5.5
+
+- Fix dark theme. Thanks @garv-shah for the PR!
+- Fix keyboard that pushes TextField to the top in mobile browsers. Thanks @jiangyubao for reporting!
+- Add `onMessageDoubleTap`. Thanks @leeyisoft for the PR!
+- Update dependencies
+
+## 1.5.4
+
+- **BREAKING CHANGE**: Rename `inputPadding` theme key to `inputMargin` (outer insets) and add `inputPadding` (inner insets, previously were hardcoded) 
+- **BREAKING CHANGE**: Add `BuildContext` as a first parameter for `onMessageLongPress`, `onMessageStatusLongPress`, `onMessageStatusTap`, `onMessageTap`. Thanks @leeyisoft for the PR!
+- Add `inputContainerDecoration` to the theme
+- Remove keyboard shortuts from Android and iOS platforms. Thanks @kyoungsongKim for reporting!
+- Use utf8 codec to parse chinese symbols in link preview. Thanks @minchemo for reporting!
+- Update dependencies. Requires Dart >= 2.15.1.
+
+## 1.5.3
+
+- Remove image blur
+- Update dependencies
+
+## 1.5.2
+
+- Add status icon tap and long press. Thanks @ikurek for the PR!
+- Add Traditional Chinese localization. Thanks @Wei-Hsun for the PR!
+- Add `onAvatarTap`
+- Fix local image preview on web
+- Update dependencies
+
+## 1.5.1
+
+- Increase tests coverage
+
+## 1.5.0
+
+- Remove `Avenir` as a default font family
+- Add Simplified Chinese localization. Thanks @roxetter for the PR!
+- Enlarge emoji in text messages that consist of emojis. See `emojiEnlargementBehavior` and `hideBackgroundOnEmojiMessages`. Thanks @halildurmus for the PR!
+- Add tap on background callback, `onBackgroundTap`. Thanks @diegonuja for the PR!
+- Add `ScrollPhysics` to the scroll view. Thanks @trixeenya for the PR!
+- Customizable margin for date dividers. See `dateDividerMargin` in theme. Thanks @ikurek for the PR!
+- Implemented configurable padding for status icons. See `statusIconPadding` in theme. Thanks @ikurek for the PR!
+- Update dependencies (requires Dart >=2.14.0)
+
+## 1.4.4
+
+- Add `dateHeaderThreshold` and `groupMessagesThreshold` (see the documentation comments)
+- Update dependencies
+
+## 1.4.3
+
+- Add `bubbleBuilder` to allow the chat bubble customization. See [documentation](https://docs.flyer.chat/flutter/chat-ui/advanced-usage#custom-chat-bubbles).
+
+## 1.4.2
+
+- Add `fileMessageBuilder`, `imageMessageBuilder` and `textMessageBuilder` for more customization options. Thanks @Androrier for the PR!
+- Fix avatar initials (show first letters of first and last names, instead of one, where applicable)
+
+## 1.4.1
+
+- Fix release on `pub.dev`
+
+## 1.4.0
+
+- Update to Flutter 2.5
+
+## 1.3.4
+
+- Update dependencies
+
+## 1.3.3
+
+- Add `onTextFieldTap`. Thanks @halildurmus for the PR!
+- Add `messageInsetsHorizontal` and `messageInsetsVertical` to the theme to customize message bubble's paddings
+
+## 1.3.2
+
+- Fix memory leak. Thanks @m-j-g for reporting!
+- Add `customBottomWidget` useful to remove the input and create a channel view
+- Add `inputPadding`, `inputTextCursorColor` and `inputTextDecoration` to the theme for the additional input customization
+
+## 1.3.1
+
+- Rename `buildCustomMessage` to `customMessageBuilder`
+- Update dependencies
+
+## 1.3.0
+
+- Chat is now correctly rendered in not full screen mode. Removed `SafeArea` from the lib itself, wrap `Chat` component if needed. Thanks @m-j-g for reporting!
+- Fixes crash deserializing `previewData`. Thanks @m-j-g for reporting!
+- Fixed automatic scroll to bottom issue in paginated mode. Thanks @m-j-g for reporting!
+- Added `userAvatarImageBackgroundColor`. Thanks @pierrebarbaroux for the PR!
+- Added `sendButtonVisibilityMode`. Thanks @halildurmus for the PR!
+- Added Turkish localization. Thanks @halildurmus for the PR!
+- Update dependencies
+
+## 1.2.0
+
+- Fix avatar color when using an image. Thanks @m-j-g for reporting!
+- Can't send spaces using keyboard anymore. Thanks @m-j-g for reporting!
+- Update dependencies
+
+## 1.1.9
+
+- Add `sendingIcon` widget to the theme. Thanks @abhisunkewar for the PR!
+- Update dependencies
+
 ## 1.1.8
 
 - Update dependencies and example
@@ -93,7 +206,7 @@ Theme migration guide:
 
 - Fix various URL preview bugs (see https://pub.dev/packages/flutter_link_previewer/changelog)
 - Add an option to disable URL preview. Thanks @Elementarereigniss for the PR!
-- Add portugese localization. Thanks @BerkSpar for the PR!
+- Add Portugese localization. Thanks @BerkSpar for the PR!
 - Update dependencies
 
 ## 1.0.2

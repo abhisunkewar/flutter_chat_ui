@@ -14,6 +14,7 @@ class ChatList extends StatefulWidget {
     required this.items,
     this.onEndReached,
     this.onEndReachedThreshold,
+    this.scrollPhysics,
   }) : super(key: key);
 
   /// Used for pagination (infinite scroll) together with [onEndReached].
@@ -37,6 +38,9 @@ class ChatList extends StatefulWidget {
   /// to the very end of the list. Default value is 0.75, e.g. start loading
   /// next page when scrolled through about 3/4 of the available content.
   final double? onEndReachedThreshold;
+
+  /// Determines the physics of the scroll view
+  final ScrollPhysics? scrollPhysics;
 
   @override
   _ChatListState createState() => _ChatListState();
@@ -105,7 +109,7 @@ class _ChatListState extends State<ChatList>
           final item = oldList[pos];
           _listKey.currentState?.removeItem(
             pos,
-            (_, animation) => _buildRemovedMessage(item, animation),
+            (_, animation) => _removedMessageBuilder(item, animation),
           );
         },
         change: (pos, payload) {},
@@ -118,49 +122,7 @@ class _ChatListState extends State<ChatList>
     _oldData = List.from(widget.items);
   }
 
-  // Hacky solution to reconsider
-  void _scrollToBottomIfNeeded(List<Object> oldList) {
-    try {
-      // Take index 1 because there is always a spacer on index 0
-      final oldItem = oldList[1];
-      final item = widget.items[1];
-
-      // Compare items to fire only on newly added messages
-      if (oldItem != item && item is Map<String, Object>) {
-        final message = item['message']! as types.Message;
-
-        // Run only for sent message
-        if (message.author.id == InheritedUser.of(context).user.id) {
-          // Delay to give some time for Flutter to calculate new
-          // size after new message was added
-          Future.delayed(const Duration(milliseconds: 100), () {
-            if (_scrollController.hasClients) {
-              _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInQuad,
-              );
-            }
-          });
-        }
-      }
-    } catch (e) {
-      // Do nothing if there are no items
-    }
-  }
-
-  Widget _buildRemovedMessage(Object item, Animation<double> animation) {
-    return SizeTransition(
-      axisAlignment: -1,
-      sizeFactor: animation.drive(CurveTween(curve: Curves.easeInQuad)),
-      child: FadeTransition(
-        opacity: animation.drive(CurveTween(curve: Curves.easeInQuad)),
-        child: widget.itemBuilder(item, null),
-      ),
-    );
-  }
-
-  Widget _buildNewMessage(int index, Animation<double> animation) {
+  Widget _newMessageBuilder(int index, Animation<double> animation) {
     try {
       final item = _oldData[index];
 
@@ -171,6 +133,51 @@ class _ChatListState extends State<ChatList>
       );
     } catch (e) {
       return const SizedBox();
+    }
+  }
+
+  Widget _removedMessageBuilder(Object item, Animation<double> animation) {
+    return SizeTransition(
+      axisAlignment: -1,
+      sizeFactor: animation.drive(CurveTween(curve: Curves.easeInQuad)),
+      child: FadeTransition(
+        opacity: animation.drive(CurveTween(curve: Curves.easeInQuad)),
+        child: widget.itemBuilder(item, null),
+      ),
+    );
+  }
+
+  // Hacky solution to reconsider
+  void _scrollToBottomIfNeeded(List<Object> oldList) {
+    try {
+      // Take index 1 because there is always a spacer on index 0
+      final oldItem = oldList[1];
+      final item = widget.items[1];
+
+      if (oldItem is Map<String, Object> && item is Map<String, Object>) {
+        final oldMessage = oldItem['message']! as types.Message;
+        final message = item['message']! as types.Message;
+
+        // Compare items to fire only on newly added messages
+        if (oldMessage != message) {
+          // Run only for sent message
+          if (message.author.id == InheritedUser.of(context).user.id) {
+            // Delay to give some time for Flutter to calculate new
+            // size after new message was added
+            Future.delayed(const Duration(milliseconds: 100), () {
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInQuad,
+                );
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      // Do nothing if there are no items
     }
   }
 
@@ -208,6 +215,7 @@ class _ChatListState extends State<ChatList>
       },
       child: CustomScrollView(
         controller: _scrollController,
+        physics: widget.scrollPhysics,
         reverse: true,
         slivers: [
           SliverPadding(
@@ -216,7 +224,7 @@ class _ChatListState extends State<ChatList>
               initialItemCount: widget.items.length,
               key: _listKey,
               itemBuilder: (_, index, animation) =>
-                  _buildNewMessage(index, animation),
+                  _newMessageBuilder(index, animation),
             ),
           ),
           SliverPadding(
@@ -235,13 +243,17 @@ class _ChatListState extends State<ChatList>
                     child: SizedBox(
                       height: 16,
                       width: 16,
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.transparent,
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          InheritedChatTheme.of(context).theme.primaryColor,
-                        ),
-                      ),
+                      child: _isNextPageLoading
+                          ? CircularProgressIndicator(
+                              backgroundColor: Colors.transparent,
+                              strokeWidth: 1.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                InheritedChatTheme.of(context)
+                                    .theme
+                                    .primaryColor,
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                 ),

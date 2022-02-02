@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import '../conditional/conditional.dart';
@@ -95,7 +94,12 @@ class _ImageMessageState extends State<ImageMessage> {
           children: [
             Container(
               height: 64,
-              margin: const EdgeInsets.all(16),
+              margin: EdgeInsets.fromLTRB(
+                InheritedChatTheme.of(context).theme.messageInsetsVertical,
+                InheritedChatTheme.of(context).theme.messageInsetsVertical,
+                16,
+                InheritedChatTheme.of(context).theme.messageInsetsVertical,
+              ),
               width: 64,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
@@ -107,7 +111,12 @@ class _ImageMessageState extends State<ImageMessage> {
             ),
             Flexible(
               child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 16, 24, 16),
+                margin: EdgeInsets.fromLTRB(
+                  0,
+                  InheritedChatTheme.of(context).theme.messageInsetsVertical,
+                  InheritedChatTheme.of(context).theme.messageInsetsHorizontal,
+                  InheritedChatTheme.of(context).theme.messageInsetsVertical,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -127,7 +136,7 @@ class _ImageMessageState extends State<ImageMessage> {
                         top: 4,
                       ),
                       child: Text(
-                        formatBytes(widget.message.size),
+                        formatBytes(widget.message.size.truncate()),
                         style: _user.id == widget.message.author.id
                             ? InheritedChatTheme.of(context)
                                 .theme
@@ -150,20 +159,11 @@ class _ImageMessageState extends State<ImageMessage> {
           maxHeight: widget.messageWidth.toDouble(),
           minWidth: 170,
         ),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
+        child: AspectRatio(
+          aspectRatio: _size.aspectRatio > 0 ? _size.aspectRatio : 1,
+          child: Image(
+            fit: BoxFit.contain,
             image: _image!,
-          ),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-          child: AspectRatio(
-            aspectRatio: _size.aspectRatio > 0 ? _size.aspectRatio : 1,
-            child: Image(
-              fit: BoxFit.contain,
-              image: _image!,
-            ),
           ),
         ),
       );

@@ -1,7 +1,8 @@
 import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
@@ -98,15 +99,15 @@ class _ChatPageState extends State<ChatPage> {
       type: FileType.any,
     );
 
-    if (result != null) {
+    if (result != null && result.files.single.path != null) {
       final message = types.FileMessage(
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         id: const Uuid().v4(),
-        mimeType: lookupMimeType(result.files.single.path ?? ''),
+        mimeType: lookupMimeType(result.files.single.path!),
         name: result.files.single.name,
         size: result.files.single.size,
-        uri: result.files.single.path ?? '',
+        uri: result.files.single.path!,
       );
 
       _addMessage(message);
@@ -139,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void _handleMessageTap(types.Message message) async {
+  void _handleMessageTap(BuildContext context, types.Message message) async {
     if (message is types.FileMessage) {
       await OpenFile.open(message.uri);
     }
@@ -184,13 +185,16 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Chat(
-        messages: _messages,
-        onAttachmentPressed: _handleAtachmentPressed,
-        onMessageTap: _handleMessageTap,
-        onPreviewDataFetched: _handlePreviewDataFetched,
-        onSendPressed: _handleSendPressed,
-        user: _user,
+      body: SafeArea(
+        bottom: false,
+        child: Chat(
+          messages: _messages,
+          onAttachmentPressed: _handleAtachmentPressed,
+          onMessageTap: _handleMessageTap,
+          onPreviewDataFetched: _handlePreviewDataFetched,
+          onSendPressed: _handleSendPressed,
+          user: _user,
+        ),
       ),
     );
   }
